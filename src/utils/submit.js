@@ -254,11 +254,15 @@ export const getOneInchCalldata = async (
   fromToken,
   toToken
 ) => {
-  if (swapAmount.toString() == '0') return '0x'
-  let apiUrl = `https://api.1inch.exchange/v4.0/${networkId}/swap?fromTokenAddress=${fromToken}&toTokenAddress=${toToken}&amount=${swapAmount}&fromAddress=${lpSwapperAddress}&slippage=50&disableEstimate=true`
-  let response = await axios.get(apiUrl)
-  return response.data.tx.data
+  if (swapAmount.toString() === '0') return '0x'
+
+  const url = `https://li.quest/v1/quote?fromChain=${swapChain}&toChain=${swapChain}&fromToken=${fromToken}&toToken=${toToken}&fromAddress=${lpSwapperAddress}&fromAmount=${swapAmount}&slippage=${maxSlippage}`
+  const res = await axios.get(url)
+  return res.data.transactionRequest.data
 }
+
+const maxSlippage = "0.005"
+const swapChain = "42161" // arb
 
 const getCollectedFeeAmounts = (
   collectEvents,
